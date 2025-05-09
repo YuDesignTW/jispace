@@ -3,10 +3,11 @@ const bookingState = {
     checkInDate: null,
     checkOutDate: null,
     guestsCount: 2,
-    selectedRoom: null,
+    selectedRooms: {}, // 改為對象，存儲每個房型的選擇數量
     roomData: null,
     totalNights: 0,
     totalPrice: 0,
+    extraBedCost: 0,
     formData: {
         name: '',
         phone: '',
@@ -229,7 +230,7 @@ function loadAvailabilityData(startDate, numberOfDays) {
 
 // 更新日期单元格，显示房型可用性
 function updateDayElement(dayElem, dateStr, availabilityData) {
-    // 检查是否有该日期的可用性數据
+    // 检查是否有该日期的可用性數據
     if (availabilityData && availabilityData[dateStr]) {
         const dateData = availabilityData[dateStr];
         
@@ -344,7 +345,7 @@ function loadAvailableRooms() {
     }
     
     // 重置选中的房型
-    bookingState.selectedRoom = null;
+    bookingState.selectedRooms = {};
     
     // 使用formatDateYMD确保正确的日期格式
     const checkInDateStr = formatDateYMD(bookingState.checkInDate);
@@ -530,6 +531,8 @@ function renderAvailableRooms(rooms) {
     
     // 生成房型卡片HTML
     const roomsHTML = rooms.map(room => {
+        const isLuxuryRoom = room.id === 'LAO_L';
+        const selectedCount = bookingState.selectedRooms[room.id] || 0;
         return `
             <div class="room-card" data-room-id="${room.id}">
                 <div class="room-image">
@@ -537,6 +540,13 @@ function renderAvailableRooms(rooms) {
                 </div>
                 <div class="room-card-header">
                     <h3>${room.name}</h3>
+                    <div class="room-selection">
+                        <div class="room-counter">
+                            <button class="room-decrease" type="button">-</button>
+                            <input type="number" class="room-count" value="${selectedCount}" min="0" max="${room.available}" readonly>
+                            <button class="room-increase" type="button">+</button>
+                        </div>
+                    </div>
                 </div>
                 <div class="room-card-body">
                     <ul class="room-features">
@@ -546,6 +556,16 @@ function renderAvailableRooms(rooms) {
                     </ul>
                     <p class="room-price">NT$ ${room.price} /晚</p>
                     <p class="room-availability">${room.available}間可用</p>
+                    ${isLuxuryRoom ? `
+                        <div class="extra-bed-option">
+                            <p>額外床位，最多2床 (+NT$500/晚)</p>
+                            <div class="bed-counter">
+                                <button class="bed-decrease" type="button">-</button>
+                                <input type="number" class="bed-count" value="0" min="0" max="2" readonly>
+                                <button class="bed-increase" type="button">+</button>
+                            </div>
+                        </div>
+                    ` : ''}
                 </div>
             </div>
         `;
@@ -554,51 +574,119 @@ function renderAvailableRooms(rooms) {
     // 更新DOM
     elements.availableRooms.innerHTML = roomsHTML;
     
-    // 添加房型选择事件监听
+    // 添加房間數量選擇事件監聽
     const roomCards = document.querySelectorAll('.room-card');
     roomCards.forEach(card => {
-        card.addEventListener('click', () => {
-            // 移除其他卡片的选中状态
-            roomCards.forEach(c => c.classList.remove('selected'));
-            
-            // 添加当前卡片的选中状态
-            card.classList.add('selected');
-            
-            // 更新选中的房型
-            const roomId = card.getAttribute('data-room-id');
-            bookingState.selectedRoom = roomId;
-            
-            // 计算總價
-            calculateTotalPrice();
-            
-            // 激活下一步按钮
-            elements.toStep3Button.disabled = false;
-            
-            // 隐藏错误信息
-            if (elements.roomSelectionError) {
-                elements.roomSelectionError.style.display = 'none';
+        const roomId = card.getAttribute('data-room-id');
+        const decreaseBtn = card.querySelector('.room-decrease');
+        const increaseBtn = card.querySelector('.room-increase');
+        const countInput = card.querySelector('.room-count');
+        
+        decreaseBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const currentValue = parseInt(countInput.value);
+            if (currentValue > 0) {
+                countInput.value = currentValue - 1;
+                bookingState.selectedRooms[roomId] = currentValue - 1;
+                if (currentValue - 1 === 0) {
+                    card.classList.remove('selected');
+                }
+                calculateTotalPrice();
+                validateStep2();
+            }
+        });
+        
+        increaseBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const currentValue = parseInt(countInput.value);
+            const maxAvailable = parseInt(card.querySelector('.room-availability').textContent);
+            if (currentValue < maxAvailable) {
+                countInput.value = currentValue + 1;
+                bookingState.selectedRooms[roomId] = currentValue + 1;
+                card.classList.add('selected');
+                calculateTotalPrice();
+                validateStep2();
+            }
+        });
+    });
+
+    // 添加床位計數器事件監聽
+    const bedCounters = document.querySelectorAll('.bed-counter');
+    bedCounters.forEach(counter => {
+        const decreaseBtn = counter.querySelector('.bed-decrease');
+        const increaseBtn = counter.querySelector('.bed-increase');
+        const countInput = counter.querySelector('.bed-count');
+        
+        decreaseBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const currentValue = parseInt(countInput.value);
+            if (currentValue > 0) {
+                countInput.value = currentValue - 1;
+                calculateTotalPrice();
+            }
+        });
+        
+        increaseBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const currentValue = parseInt(countInput.value);
+            if (currentValue < 2) {
+                countInput.value = currentValue + 1;
+                calculateTotalPrice();
             }
         });
     });
 }
 
+// 验证第二步
+function validateStep2() {
+    // 檢查是否有選擇任何房型
+    const hasSelectedRooms = Object.values(bookingState.selectedRooms).some(count => count > 0);
+    
+    if (elements.toStep3Button) {
+        elements.toStep3Button.disabled = !hasSelectedRooms;
+    }
+    
+    if (elements.roomSelectionError) {
+        elements.roomSelectionError.style.display = hasSelectedRooms ? 'none' : 'block';
+    }
+}
+
 // 计算總價
 function calculateTotalPrice() {
-    const { selectedRoom, totalNights, roomData } = bookingState;
+    const { selectedRooms, totalNights, roomData } = bookingState;
     
     // 如果尚未选择房型或尚未计算住宿天數，则返回
-    if (!selectedRoom || totalNights === 0) {
+    if (!roomData || totalNights === 0) {
         return;
     }
     
-    // 找到选中的房型
-    const room = roomData.find(r => r.id === selectedRoom);
+    let totalPrice = 0;
+    let extraBedCost = 0;
     
-    // 计算總價
-    const totalPrice = room.price * totalNights;
+    // 計算每個房型的價格
+    Object.entries(selectedRooms).forEach(([roomId, count]) => {
+        if (count > 0) {
+            const room = roomData.find(r => r.id === roomId);
+            if (room) {
+                // 計算房間基本價格
+                totalPrice += room.price * count * totalNights;
+                
+                // 如果是豪華房，計算額外床位費用
+                if (roomId === 'LAO_L') {
+                    const selectedCard = document.querySelector(`.room-card[data-room-id="${roomId}"]`);
+                    if (selectedCard) {
+                        const bedCount = parseInt(selectedCard.querySelector('.bed-count').value) || 0;
+                        // 修正床位費用計算：每個房間的床位費用 = 床位數量 * 500元 * 天數
+                        extraBedCost += bedCount * 500 * totalNights;
+                    }
+                }
+            }
+        }
+    });
     
     // 更新状态
-    bookingState.totalPrice = totalPrice;
+    bookingState.totalPrice = totalPrice + extraBedCost;
+    bookingState.extraBedCost = extraBedCost;
 }
 
 // 更新预订摘要
@@ -608,21 +696,28 @@ function updateBookingSummary() {
         checkOutDate, 
         totalNights, 
         guestsCount, 
-        selectedRoom, 
+        selectedRooms,
         totalPrice,
+        extraBedCost,
         roomData
     } = bookingState;
     
-    // 找到选中的房型
-    const room = roomData.find(r => r.id === selectedRoom);
+    // 生成房型摘要
+    const roomSummary = Object.entries(selectedRooms)
+        .filter(([_, count]) => count > 0)
+        .map(([roomId, count]) => {
+            const room = roomData.find(r => r.id === roomId);
+            return `
+                <div class="booking-summary-item">
+                    <span>${room.name} x ${count}間: </span>
+                    <span>NT$ ${room.price * count} / 晚</span>
+                </div>
+            `;
+        }).join('');
     
     // 生成摘要HTML
     const summaryHTML = `
         <h3 class="booking-summary-title">預訂詳情</h3>
-        <div class="booking-summary-item">
-            <span>房型:</span>
-            <span>${room.name}</span>
-        </div>
         <div class="booking-summary-item">
             <span>入住日期:</span>
             <span>${formatDate(checkInDate)}</span>
@@ -639,18 +734,34 @@ function updateBookingSummary() {
             <span>入住人數:</span>
             <span>${guestsCount}人</span>
         </div>
-        <div class="booking-summary-item">
-            <span>每晚價格:</span>
-            <span>NT$ ${room.price}</span>
-        </div>
+        ${roomSummary}
+        ${extraBedCost > 0 ? `
+            <div class="booking-summary-item">
+                <span>額外床位: </span>
+                <span>NT$ ${Math.round(extraBedCost / totalNights)} / 晚 (${getExtraBedText()})</span>
+            </div>
+        ` : ''}
         <div class="booking-summary-total">
-            <span>總價:</span>
+            <span>總價 (${totalNights}晚):</span>
             <span>NT$ ${totalPrice}</span>
         </div>
     `;
     
     // 更新DOM
     elements.bookingSummary.innerHTML = summaryHTML;
+}
+
+// 獲取額外床位文字說明
+function getExtraBedText() {
+    const luxuryRoom = document.querySelector('.room-card[data-room-id="LAO_L"]');
+    if (luxuryRoom) {
+        const bedCount = parseInt(luxuryRoom.querySelector('.bed-count').value) || 0;
+        const roomCount = parseInt(luxuryRoom.querySelector('.room-count').value) || 0;
+        if (bedCount > 0 && roomCount > 0) {
+            return `+${bedCount}床`;
+        }
+    }
+    return '';
 }
 
 // 验证表单
@@ -702,9 +813,14 @@ function submitBooking() {
     elements.bookingError.style.display = 'none';
     elements.submitLoading.style.display = 'flex';
     
-    // 获取选中的房型數据
-    const selectedRoomData = bookingState.roomData.find(r => r.id === bookingState.selectedRoom);
-    if (!selectedRoomData) {
+    // 获取选中的房型數據
+    const selectedRoomsData = Object.entries(bookingState.selectedRooms)
+        .filter(([roomId, count]) => count > 0)
+        .map(([roomId, count]) => ({
+            roomId: roomId,
+            count: count
+        }));
+    if (selectedRoomsData.length === 0) {
         console.error('提交預訂失敗：找不到選中的房型數據');
         elements.submitLoading.style.display = 'none';
         elements.bookingError.style.display = 'block';
@@ -723,12 +839,11 @@ function submitBooking() {
     console.log('退房日期對象:', bookingState.checkOutDate);
     console.log('退房日期格式化:', checkOutFormatted);
     
-    // 准备要发送到Google Sheets的數据
+    // 准备要发送到Google Sheets的數據
     const bookingData = {
         booking_id: generateBookingId(),
         booking_date: formatDateYMD(today),
-        roomId: bookingState.selectedRoom,
-        room_name: selectedRoomData.name,
+        rooms: selectedRoomsData,
         checkInDate: checkInFormatted,
         checkOutDate: checkOutFormatted,
         nights: bookingState.totalNights,
@@ -852,7 +967,7 @@ function handleDirectSubmitSuccess(bookingData) {
         elements.submitLoading.style.display = 'none';
     }
     
-    // 确保所有关键數据都存在
+    // 确保所有关键數據都存在
     if (!bookingData.checkInDate && bookingState.checkInDate) {
         bookingData.checkInDate = formatDateYMD(bookingState.checkInDate);
     }
@@ -929,7 +1044,7 @@ function generateBookingId() {
 
 // 更新最终预订详情
 function updateFinalBookingDetails(bookingData) {
-    // 打印预订數据用于调试
+    // 打印预订數據用于调试
     console.log('更新預訂詳情數據:', bookingData);
     
     // 确保所有必要字段都有值
@@ -991,7 +1106,7 @@ function updateButtonState() {
         case 2:
             // 第二步：只有選擇了房型才能繼續
             if (elements.toStep3Button) {
-                elements.toStep3Button.disabled = !bookingState.selectedRoom;
+                elements.toStep3Button.disabled = !bookingState.selectedRooms || Object.values(bookingState.selectedRooms).every(count => count === 0);
             }
             break;
         case 3:
@@ -1279,7 +1394,7 @@ function initEventListeners() {
     if (elements.toStep3Button) {
         elements.toStep3Button.addEventListener('click', () => {
             // 检查是否已选择房型
-            if (!bookingState.selectedRoom) {
+            if (Object.values(bookingState.selectedRooms).every(count => count === 0)) {
                 if (elements.roomSelectionError) {
                     elements.roomSelectionError.style.display = 'block';
                 }
