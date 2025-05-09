@@ -18,7 +18,7 @@ const bookingState = {
 };
 
 // API 端點
-const API_ENDPOINT = 'https://script.google.com/macros/s/AKfycbyFBG8zbI1VWfpJ8MNEISJgRluWuaFPQvEyeoSRKGuVecTe8o3VurdRcqXIKcXImyHD/exec';
+const API_ENDPOINT = 'https://script.google.com/macros/s/AKfycbzZxzyi_u44d1RH2BmC70HdM4Qu5JjNbYkkWBR2f_cFQSmTJdT_AcV4Ah68YOUsIida/exec';
 
 // 调试模式 (打开可以在控制台看到更多日志)
 const DEBUG = false;
@@ -830,6 +830,14 @@ function submitBooking() {
         return;
     }
     
+    // 獲取加床資訊
+    let extraBedCount = 0;
+    const luxuryRoom = document.querySelector('.room-card[data-room-id="LAO_L"]');
+    if (luxuryRoom) {
+        const bedCount = parseInt(luxuryRoom.querySelector('.bed-count').value) || 0;
+        extraBedCount = bedCount;
+    }
+    
     // 使用统一的formatDateYMD函數处理日期
     const today = new Date();
     const checkInFormatted = formatDateYMD(bookingState.checkInDate);
@@ -856,8 +864,9 @@ function submitBooking() {
         guestName: bookingState.formData.name,
         guestPhone: bookingState.formData.phone,
         guestEmail: bookingState.formData.email,
-        arrival_time: bookingState.formData.arrivalTime,
-        special_requests: bookingState.formData.specialRequests,
+        arrival_time: bookingState.formData.arrivalTime || '', // 確保有值
+        special_requests: bookingState.formData.specialRequests || '', // 確保有值
+        extra_bed_count: extraBedCount, // 添加加床數量
         status: '待確認'
     };
     
