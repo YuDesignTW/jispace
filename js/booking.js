@@ -17,6 +17,9 @@ const bookingState = {
     }
 };
 
+// API 端點
+const API_ENDPOINT = 'https://script.google.com/macros/s/AKfycbyFBG8zbI1VWfpJ8MNEISJgRluWuaFPQvEyeoSRKGuVecTe8o3VurdRcqXIKcXImyHD/exec';
+
 // 调试模式 (打开可以在控制台看到更多日志)
 const DEBUG = false;
 
@@ -212,7 +215,7 @@ function loadAvailabilityData(startDate, numberOfDays) {
     console.log(`预加载房型可用性數据: 开始日期=${checkIn}, 结束日期=${checkOut}`);
     
     // 返回Promise
-    return fetch(`https://script.google.com/macros/s/AKfycbwjXdV79OGRD4Lrubad1CCYnbKmCj2bYTnGM4pylUHwHE_WiJezJjvavHmUeyenfqOI/exec?action=checkAvailabilityCalendar&checkIn=${checkIn}&checkOut=${checkOut}`)
+    return fetch(`${API_ENDPOINT}?action=checkAvailabilityCalendar&checkIn=${checkIn}&checkOut=${checkOut}`)
         .then(response => response.json())
         .then(data => {
             if (data.success && data.availabilityData) {
@@ -358,8 +361,8 @@ function loadAvailableRooms() {
     console.log('退房日期對象:', bookingState.checkOutDate);
     console.log('退房日期格式化:', checkOutDateStr);
     
-    // API端點 - 修正URL
-    const apiEndpoint = 'https://script.google.com/macros/s/AKfycbwjXdV79OGRD4Lrubad1CCYnbKmCj2bYTnGM4pylUHwHE_WiJezJjvavHmUeyenfqOI/exec';
+    // API端點
+    const apiEndpoint = API_ENDPOINT;
     
     // 使用純 fetch 方式獲取數據（使用 no-cors 模式）
     console.log(`獲取房型數據：${checkInDateStr} 至 ${checkOutDateStr}`);
@@ -859,7 +862,7 @@ function submitBooking() {
     };
     
     // API端點
-    const apiEndpoint = 'https://script.google.com/macros/s/AKfycbwjXdV79OGRD4Lrubad1CCYnbKmCj2bYTnGM4pylUHwHE_WiJezJjvavHmUeyenfqOI/exec';
+    const apiEndpoint = API_ENDPOINT;
     
     // 日誌記錄將要發送的數據
     console.log('準備提交預訂數據:', {
