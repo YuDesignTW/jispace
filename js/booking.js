@@ -843,7 +843,8 @@ function submitBooking() {
     const bookingData = {
         booking_id: generateBookingId(),
         booking_date: formatDateYMD(today),
-        rooms: selectedRoomsData,
+        roomId: selectedRoomsData[0].roomId, // 使用第一個選中的房型ID
+        roomCount: selectedRoomsData[0].count, // 使用第一個選中的房型數量
         checkInDate: checkInFormatted,
         checkOutDate: checkOutFormatted,
         nights: bookingState.totalNights,
@@ -1070,14 +1071,14 @@ function updateFinalBookingDetails(bookingData) {
     
     // 生成详情HTML
     const detailsHTML = `
-        <h3>预订号: ${booking_id}</h3>
+        <h3>訂單編號: ${booking_id}</h3>
         <p><strong>房型:</strong> ${room_name}</p>
         <p><strong>入住日期:</strong> ${checkInDate}</p>
         <p><strong>退房日期:</strong> ${checkOutDate}</p>
         <p><strong>住宿天數:</strong> ${nights}晚</p>
         <p><strong>入住人數:</strong> ${guests}人</p>
         <p><strong>總價:</strong> NT$ ${totalPrice}</p>
-        <p><strong>预订状态:</strong> ${status}</p>
+        <p><strong>預訂狀態:</strong> ${status}</p>
     `;
     
     if (elements.finalBookingDetails) {
