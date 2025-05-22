@@ -18,7 +18,7 @@ const bookingState = {
 };
 
 // API 端點
-const API_ENDPOINT = 'https://script.google.com/macros/s/AKfycbzZxzyi_u44d1RH2BmC70HdM4Qu5JjNbYkkWBR2f_cFQSmTJdT_AcV4Ah68YOUsIida/exec';
+const API_ENDPOINT = 'https://script.google.com/macros/s/AKfycbx-rbC_-2xciUPcRxOkFyudCuyWXJ4VawgTlry2LJir-F734RpyvCvcTCO8M7v05nTj/exec';
 
 // 调试模式 (打开可以在控制台看到更多日志)
 const DEBUG = false;
@@ -783,7 +783,7 @@ function validateForm() {
     // 检查电子邮件格式
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-        elements.formError.innerHTML = '<p>请输入有效的电子邮箱地址</p>';
+        elements.formError.innerHTML = '<p>請輸入正確的信箱地址</p>';
         elements.formError.style.display = 'block';
         return false;
     }
