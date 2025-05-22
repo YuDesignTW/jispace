@@ -8,10 +8,225 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <link rel="stylesheet" href="./css/style.css">
     <link rel="stylesheet" href="./css/booking.css">
+    <style>
+        body {
+            background-image: url('./assets/img/background.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            background-repeat: no-repeat;
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 20px 0;
+            margin-top: 30px;
+            background-color: rgba(255, 255, 255, 0.85);
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .footer p {
+            margin: 5px 0;
+            color: #333;
+        }
+        
+        .footer a {
+            color: #0066cc;
+            text-decoration: none;
+        }
+        
+        .footer a:hover {
+            text-decoration: underline;
+        }
+        
+        .copyright {
+            margin-top: 10px;
+            font-size: 0.9em;
+            color: #666;
+        }
+        
+        /* 導航按鈕樣式 */
+        .navigation-buttons {
+            margin-top: 30px;
+            display: flex;
+            justify-content: center;
+        }
+        
+        .step-buttons {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            width: 100%;
+            max-width: 300px;
+        }
+        
+        .step-buttons button {
+            width: 100%;
+            padding: 12px 20px;
+            font-size: 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .next-btn {
+            background-color: #000000;
+            color: white;
+            border: none;
+        }
+        
+        .next-btn:hover:not([disabled]) {
+            background-color: #242424;
+        }
+        
+        .next-btn:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+        
+        .back-btn {
+            background-color: transparent;
+            color: #555;
+            border: 1px solid #ccc;
+        }
+        
+        .back-btn:hover {
+            background-color: #f1f1f1;
+        }
+        
+        /* 付款資訊樣式 */
+        .payment-info-section {
+            margin-top: 30px;
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 25px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        
+        .payment-title {
+            text-align: center;
+            margin-bottom: 5px;
+            font-size: 1.3rem;
+            color: #333;
+        }
+        
+        .payment-note {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .payment-methods {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        @media (min-width: 768px) {
+            .payment-methods {
+                flex-direction: row;
+                gap: 30px;
+                justify-content: center;
+            }
+            
+            .payment-method {
+                flex: 1;
+                max-width: 350px;
+            }
+        }
+        
+        .payment-method {
+            text-align: center;
+            padding: 15px;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            background-color: #fafafa;
+        }
+        
+        .payment-method h4 {
+            margin: 0;
+            font-size: 1.1rem;
+            color: #333;
+        }
+        
+        .payment-content {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+        }
+        
+        .payment-info-row {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            width: 100%;
+        }
+        
+        .payment-logo {
+            max-width: 60px;
+            height: auto;
+            flex-shrink: 0;
+        }
+        
+        .payment-details {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+        }
+        
+        .payment-qr {
+            max-width: 120px;
+            height: auto;
+        }
+        
+        .payment-icon {
+            font-size: 1.8rem;
+            color: #333;
+            min-width: 40px;
+            flex-shrink: 0;
+        }
+        
+        .account-number {
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: #333;
+            letter-spacing: 0.5px;
+            margin: 0;
+            word-break: break-all;
+            text-align: left;
+        }
+        
+        .method-title {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+        
+        .method-title h4 {
+            margin: 0;
+            font-size: 1.1rem;
+            color: #333;
+        }
+        
+        .payment-icon {
+            font-size: 1.5rem;
+            color: #333;
+        }
+    </style>
 </head>
 <body>
     <div class="booking-container">
-        <h1 class="booking-title">線上預訂</h1>
+        <h1 class="booking-title">JI SPACE 線上預訂</h1>
         
         <div class="booking-process">
             <div class="progress-step active" id="step1">
@@ -149,6 +364,7 @@
                         <h3>取消政策</h3>
                         <p><strong>入住前7天取消：</strong> 全額退款</p>
                         <p><strong>入住前0-6天取消：</strong> 不予退款</p>
+                        <p><strong></strong>不可抗力因素：</strong> 若遇天災、颱風、地震等不可抗力因素，依據中央氣象署公告，住宿地或旅客出發地發布停班停課標準，可選擇：全額退款，或保留訂金，於六個月內延期入住一次。</p>
                     </div>
                     <div class="form-group checkbox-group">
                         <input type="checkbox" id="accept-policy" name="accept-policy" required>
@@ -162,19 +378,60 @@
             
             <!-- 第四步：完成预订 -->
             <div class="booking-step step-4" style="display: none;">
+                <!-- 成功訊息 -->
                 <div class="booking-result" id="booking-success">
                     <div class="success-icon">
                         <i class="fas fa-check-circle"></i>
                     </div>
                     <h2>預訂成功！</h2>
-                    <p>您的預訂請求已提交，我們將盡快通過電子郵件確認您的預訂。</p>
+                    <p>您的預訂請求已提交，我們將透過電子郵件確認您的預訂。</p>
                     <div class="booking-details" id="final-booking-details">
                         <!-- 预订详情会通过JavaScript动态加载 -->
                     </div>
-                    <p>若有任何疑問，請聯絡我們：</p>
-                    <p class="contact-details"><i class="fas fa-phone"></i> 0901255029</p>
-                    <p class="contact-details"><i class="fas fa-envelope"></i> jispace.tw@gmail.com</p>
+
+                    <!-- 付款資訊卡片 -->
+                    <div class="payment-info-section">
+                        <h3 class="payment-title">您的付款資訊</h3>
+                        <p class="payment-note">您可以選擇以下的方式進行付款</p>
+                        <p class="payment-note">付款完成後，請透過Line官方帳號聯繫我們</p>
+                        
+                        <div class="payment-methods">
+                            <!-- Line Pay -->
+                            <div class="payment-method">
+                                <div class="method-title">
+                                    <h4>Line Pay</h4>
+                                    <img src="./assets/img/linepay-logo.png" alt="Line Pay Logo" class="payment-logo">
+                                </div>
+                                <div class="payment-content">
+                                    <div class="payment-info-row">
+                                        <div class="payment-details">
+                                            <img src="./assets/img/linepay-qr.png" alt="Line Pay QR Code" class="payment-qr">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- 銀行匯款 -->
+                            <div class="payment-method">
+                                <div class="method-title">
+                                    <h4>銀行匯款</h4>
+                                    <i class="fas fa-university payment-icon"></i>
+                                </div>
+                                <div class="payment-content">
+                                    <div class="payment-info-row">
+                                        <div class="payment-details">
+                                            <p class="account-number">0000 1111 2222 33333 4444</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <p>若有任何疑問，請透過下方聯繫資訊，聯絡我們</p>
+
                 </div>
+                
+                <!-- 錯誤訊息 -->
                 <div class="booking-result" id="booking-error" style="display: none;">
                     <div class="error-icon">
                         <i class="fas fa-exclamation-circle"></i>
@@ -186,6 +443,8 @@
                     <p class="contact-details"><i class="fas fa-envelope"></i> jispace.tw@gmail.com</p>
                     <button type="button" id="retry-booking" class="retry-btn">重試</button>
                 </div>
+                
+                <!-- 載入中 -->
                 <div class="loading-container" id="submit-loading" style="display: none;">
                     <div class="loading-spinner"></div>
                     <p>正在提交預訂...</p>
@@ -196,16 +455,27 @@
         <!-- 導航按鈕容器 -->
         <div class="navigation-buttons" id="navigation-buttons">
             <div class="step-buttons">
-                <button type="button" id="back-to-step1" class="back-btn">返回</button>
+                <!-- 步驟1的按鈕 -->
                 <button type="button" id="to-step2" class="next-btn" disabled>查看可用房型</button>
-                <button type="button" id="back-to-step2" class="back-btn" style="display: none;">返回</button>
+                
+                <!-- 步驟2的按鈕 -->
+                <button type="button" id="back-to-step1" class="back-btn" style="display: none;">返回</button>
                 <button type="button" id="to-step3" class="next-btn" disabled style="display: none;">填寫資訊</button>
+                
+                <!-- 步驟3的按鈕 -->
+                <button type="button" id="back-to-step2" class="back-btn" style="display: none;">返回</button>
                 <button type="button" id="to-step4" class="next-btn" style="display: none;">確認預訂</button>
             </div>
         </div>
 
+        <!-- 底部聯絡資訊 -->
     </div>
-
+    <div class="footer">
+        <p><i class="fas fa-phone"></i> 連絡電話：0901255029</p>
+        <p><i class="fas fa-envelope"></i> 信箱：<a href="mailto:jispace.tw@gmail.com">jispace.tw@gmail.com</a></p>
+        <p><i class="fab fa-line"></i> 官方Line：<a href="https://line.me/R/ti/p/@763foyrq" target="_blank">https://line.me/R/ti/p/@763foyrq</a></p>
+        <p class="copyright">© 2025 Ji Space. All rights reserved</p>
+    </div>
     <!-- 隱藏的iframe表單目標 -->
     <iframe id="submit-target-iframe" name="submit-target-iframe" style="display:none;"></iframe>
 
