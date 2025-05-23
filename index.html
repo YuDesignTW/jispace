@@ -25,7 +25,7 @@
             border-radius: 8px;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
             width: 100%;
-            max-width: 800px;
+            max-width: 1000px;
             margin-left: auto;
             margin-right: auto;
         }
@@ -106,7 +106,7 @@
             margin-top: 30px;
             background-color: #fff;
             border-radius: 8px;
-            padding: 25px;
+            padding: 20px;
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
         }
         
@@ -139,7 +139,7 @@
             
             .payment-method {
                 flex: 1;
-                max-width: 350px;
+                max-width: 500px;
             }
         }
         
@@ -179,12 +179,15 @@
         .payment-details {
             flex: 1;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
         }
         
         .payment-qr {
-            max-width: 120px;
+            max-width: 180px;
             height: auto;
+            margin: 10px 0;
         }
         
         .payment-icon {
@@ -201,7 +204,7 @@
             letter-spacing: 0.5px;
             margin: 0;
             word-break: break-all;
-            text-align: left;
+            text-align: center;
         }
         
         .method-title {
@@ -420,7 +423,8 @@
                                     <div class="payment-info-row">
                                         <div class="payment-details">
                                             <p class="account-number">國泰世華銀行 013</p>
-                                            <p class="account-number">帳戶號碼 2187 0009 8325</p>
+                                            <p class="account-number">帳戶號碼</p> 
+                                            <p class="account-number">2187 0009 8325</p>
                                         </div>
                                     </div>
                                 </div>
@@ -428,7 +432,7 @@
                         </div>
                     </div>
                     <div class="payment-note">
-                        <p>付款完成後，請透過Line官方帳號聯繫我們</p>
+                        <p>付款完成後，請透過Line官方帳號聯繫我們，我們將盡速確認您的預訂</p>
                     </div>
 
                 </div>

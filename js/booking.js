@@ -18,7 +18,7 @@ const bookingState = {
 };
 
 // API 端點
-const API_ENDPOINT = 'https://script.google.com/macros/s/AKfycbypnxOyQHX9VxRLm5sJl2LdThXU4AQ-09xA2pdoj4ghyjwWYPatMJY51Vr3C9QXCEnI/exec';
+const API_ENDPOINT = 'https://script.google.com/macros/s/AKfycbzoHC2sQfDNky6GhO8qb13ppPWohbnK3cpL4Lz-9q_3okQqs5_f46wlPh9m5gQISODF/exec';
 
 // 调试模式 (打开可以在控制台看到更多日志)
 const DEBUG = false;
