@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JI STAY 線上預訂</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="./css/style.css">
+    <link rel="stylesheet" href="./css/booking.css">
+    <style>
+        body {
+            background-image: url('./assets/img/background.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            background-repeat: no-repeat;
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 20px 0;
+            margin-top: 30px;
+            background-color: rgba(255, 255, 255, 0.85);
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 1000px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .footer p {
+            margin: 5px 0;
+            color: #333;
+        }
+        
+        .footer a {
+            color: #0066cc;
+            text-decoration: none;
+        }
+        
+        .footer a:hover {
+            text-decoration: underline;
+        }
+        
+        .copyright {
+            margin-top: 10px;
+            font-size: 0.9em;
+            color: #666;
+        }
+        
+        /* 導航按鈕樣式 */
+        .navigation-buttons {
+            margin-top: 30px;
+            display: flex;
+            justify-content: center;
+        }
+        
+        .step-buttons {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            width: 100%;
+            max-width: 300px;
+        }
+        
+        .step-buttons button {
+            width: 100%;
+            padding: 12px 20px;
+            font-size: 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .next-btn {
+            background-color: #000000;
+            color: white;
+            border: none;
+        }
+        
+        .next-btn:hover:not([disabled]) {
+            background-color: #242424;
+        }
+        
+        .next-btn:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+        
+        .back-btn {
+            background-color: transparent;
+            color: #555;
+            border: 1px solid #ccc;
+        }
+        
+        .back-btn:hover {
+            background-color: #f1f1f1;
+        }
+        
+        /* 付款資訊樣式 */
+        .payment-info-section {
+            margin-top: 30px;
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        
+        .payment-title {
+            text-align: center;
+            margin-bottom: 5px;
+            font-size: 1.3rem;
+            color: #333;
+        }
+        
+        .payment-note {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .payment-methods {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        @media (min-width: 768px) {
+            .payment-methods {
+                flex-direction: row;
+                gap: 30px;
+                justify-content: center;
+            }
+            
+            .payment-method {
+                flex: 1;
+                max-width: 500px;
+            }
+        }
+        
+        .payment-method {
+            text-align: center;
+            padding: 15px;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            background-color: #fafafa;
+        }
+        
+        .payment-method h4 {
+            margin: 0;
+            font-size: 1.1rem;
+            color: #333;
+        }
+        
+        .payment-content {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+        }
+        
+        .payment-info-row {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            width: 100%;
+        }
+        
+        .payment-logo {
+            max-width: 60px;
+            height: auto;
+            flex-shrink: 0;
+        }
+        
+        .payment-details {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .payment-qr {
+            max-width: 180px;
+            height: auto;
+            margin: 10px 0;
+        }
+        
+        .payment-icon {
+            font-size: 1.8rem;
+            color: #333;
+            min-width: 40px;
+            flex-shrink: 0;
+        }
+        
+        .account-number {
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: #333;
+            letter-spacing: 0.5px;
+            margin: 0;
+            word-break: break-all;
+            text-align: center;
+        }
+        
+        .method-title {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+        
+        .method-title h4 {
+            margin: 0;
+            font-size: 1.1rem;
+            color: #333;
+        }
+        
+        .payment-icon {
+            font-size: 1.5rem;
+            color: #333;
+        }
+        
+        /* 優惠券樣式 */
+        .coupon-section {
+            border: 1px solid #e0e0e0;
+            padding: 20px;
+            border-radius: 8px;
+            background-color: #fafafa;
+            margin: 15px 0;
+        }
+        
+        .coupon-input-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .coupon-input-container input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        .validate-coupon-btn {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
+        
+        .validate-coupon-btn:hover {
+            background-color: #0056b3;
+        }
+        
+        .validate-coupon-btn:disabled {
+            background-color: #6c757d;
+            cursor: not-allowed;
+        }
+        
+        .coupon-feedback {
+            font-size: 14px;
+            margin-top: 5px;
+        }
+        
+        .coupon-feedback.success {
+            color: #28a745;
+        }
+        
+        .coupon-feedback.error {
+            color: #dc3545;
+        }
+        
+        .coupon-discount-info {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            border-radius: 4px;
+        }
+        
+        .discount-details {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .discount-icon {
+            font-size: 20px;
+        }
+        
+        .discount-text {
+            color: #155724;
+            font-weight: 500;
+        }
+        
+        /* 預訂摘要中的優惠券信息 */
+        .coupon-applied {
+            background-color: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 4px;
+            padding: 10px;
+            margin: 10px 0;
+        }
+        
+        .coupon-applied .coupon-title {
+            font-weight: bold;
+            color: #856404;
+            margin-bottom: 5px;
+        }
+        
+        .price-breakdown {
+            border-top: 1px solid #eee;
+            padding-top: 10px;
+            margin-top: 10px;
+        }
+        
+        .price-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+        }
+        
+        .price-row.discount {
+            color: #28a745;
+            font-weight: 500;
+        }
+        
+        .price-row.total {
+            font-weight: bold;
+            font-size: 18px;
+            border-top: 1px solid #ddd;
+            padding-top: 10px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="booking-container">
+        <h1 class="booking-title">JI SPACE 線上預訂</h1>
+        
+        <div class="booking-process">
+            <div class="progress-step active" id="step1">
+                <div class="step-number">1</div>
+                <div class="step-text">選擇日期</div>
+            </div>
+            <div class="process-line"></div>
+            <div class="progress-step" id="step2">
+                <div class="step-number">2</div>
+                <div class="step-text">選擇房型</div>
+            </div>
+            <div class="process-line"></div>
+            <div class="progress-step" id="step3">
+                <div class="step-number">3</div>
+                <div class="step-text">填寫資訊</div>
+            </div>
+            <div class="process-line"></div>
+            <div class="progress-step" id="step4">
+                <div class="step-number">4</div>
+                <div class="step-text">完成預訂</div>
+            </div>
+        </div>
+        
+        <div class="booking-steps">
+            <!-- 第一步：选择日期 -->
+            <div class="booking-step step-1" style="display: block;">
+                <h2>選擇入住和退房日期</h2>
+                
+                <!-- 加載指示器 -->
+                <div class="loading-container" id="loading-room-data">
+                    <div class="loading-spinner"></div>
+                    <p>正在加載房間資訊中...</p>
+                </div>
+                
+                <!-- 日期選擇器，初始隱藏 -->
+                <div class="date-selection-container" id="date-selection-container" style="display: none;">
+                    <div class="date-picker-container">
+                        <div class="date-field">
+                            <label for="date-range">選擇日期範圍</label>
+                            <div class="input-with-clear">
+                                <input type="text" id="date-range" placeholder="入住日期 - 退房日期" readonly>
+                                <button type="button" id="date-range-clear" class="date-clear" style="display: none;">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="calendar-legend">
+                        <div class="legend-item">
+                            <div class="legend-color std"></div>
+                            <span>2人房</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color lux"></div>
+                            <span>4人房</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color no-rooms"></div>
+                            <span>無空房</span>
+                        </div>
+                    </div>
+                    <div class="calendar-info">
+                        <p>色塊代表該日房型可供預訂狀態，預訂至少1晚</p>
+                    </div>
+                    
+                    <div class="guests-container">
+                        <label for="guests-count">入住人數</label>
+                        <div class="guests-counter">
+                            <button type="button" id="decrease-guests" class="counter-btn"><i class="fas fa-minus"></i></button>
+                            <input type="number" id="guests-count" value="2" min="1" max="10" readonly>
+                            <button type="button" id="increase-guests" class="counter-btn"><i class="fas fa-plus"></i></button>
+                        </div>
+                    </div>
+                    <div class="nights-summary" id="nights-summary">
+                        <p>請選擇入住和退房日期</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 第二步：选择房型 -->
+            <div class="booking-step step-2" style="display: none;">
+                <h2>選擇房型</h2>
+                <p>請選擇入住房間與數量</p>
+                <div class="loading-container" id="loading-rooms">
+                    <div class="loading-spinner"></div>
+                    <p>正在查詢可用房型...</p>
+                </div>
+                <div class="available-rooms" id="available-rooms">
+                    <!-- 房间信息会通过JavaScript动态加载 -->
+                </div>
+                <div class="room-selection-error" id="room-selection-error">
+                    <p>請選擇一個房型以繼續</p>
+                </div>
+            </div>
+            
+            <!-- 第三步：填写个人信息 -->
+            <div class="booking-step step-3" style="display: none;">
+                <h2>客人資訊</h2>
+                <div class="booking-summary" id="booking-summary">
+                    <!-- 预订摘要会通过JavaScript动态加载 -->
+                </div>
+                <form id="guest-info-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="guest-name">姓名 <span class="required">*</span></label>
+                            <input type="text" id="guest-name" name="guest-name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="guest-phone">聯絡電話 <span class="required">*</span></label>
+                            <input type="tel" id="guest-phone" name="guest-phone" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="guest-email">電子郵箱 <span class="required">*</span></label>
+                        <input type="email" id="guest-email" name="guest-email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="arrival-time">預計抵達時間</label>
+                        <select id="arrival-time" name="arrival-time">
+                            <option value="">請選擇抵達時間</option>
+                            <option value="12:00-14:00">12:00 - 14:00</option>
+                            <option value="14:00-16:00">14:00 - 16:00</option>
+                            <option value="16:00-18:00">16:00 - 18:00</option>
+                            <option value="18:00-20:00">18:00 - 20:00</option>
+                            <option value="20:00-22:00">20:00 - 22:00</option>
+                            <option value="其他時間">其他時間 (請在備註中說明)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="special-requests">特殊要求或備註</label>
+                        <textarea id="special-requests" name="special-requests" rows="4" placeholder="如有特殊飲食需求、過敏情況或其他要求，請在此說明"></textarea>
+                    </div>
+                    
+                    <!-- 優惠券輸入區塊 -->
+                    <div class="form-group coupon-section">
+                        <label for="coupon-code">優惠券代碼</label>
+                        <div class="coupon-input-container">
+                            <input type="text" id="coupon-code" name="coupon-code" placeholder="請輸入優惠券代碼">
+                            <button type="button" id="validate-coupon-btn" class="validate-coupon-btn">驗證</button>
+                        </div>
+                        <div class="coupon-feedback" id="coupon-feedback"></div>
+                        <div class="coupon-discount-info" id="coupon-discount-info" style="display: none;">
+                            <div class="discount-details">
+                                <span class="discount-icon">🎟️</span>
+                                <span class="discount-text" id="discount-text"></span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="cancellation-policy">
+                        <h3>取消政策</h3>
+                        <p><strong>入住前7天取消：</strong> 全額退款</p>
+                        <p><strong>入住前0-6天取消：</strong> 不予退款</p>
+                        <p><strong></strong>不可抗力因素：</strong> 若遇天災、颱風、地震等不可抗力因素，依據中央氣象署公告，住宿地或旅客出發地發布停班停課標準，可選擇：全額退款，或保留訂金，於六個月內延期入住一次。</p>
+                    </div>
+                    <div class="form-group checkbox-group">
+                        <input type="checkbox" id="accept-policy" name="accept-policy" required>
+                        <label for="accept-policy">我已閱讀並接受<a href="#" id="policy-link">取消政策</a> <span class="required">*</span></label>
+                    </div>
+                </form>
+                <div class="form-error" id="form-error">
+                    <p>請填寫所有必填欄位</p>
+                </div>
+            </div>
+            
+            <!-- 第四步：完成预订 -->
+            <div class="booking-step step-4" style="display: none;">
+                <!-- 成功訊息 -->
+                <div class="booking-result" id="booking-success">
+                    <div class="success-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <h2>預訂成功！</h2>
+                    <p>您的預訂請求已提交，我們將透過電子郵件確認您的預訂。</p>
+                    <div class="booking-details" id="final-booking-details">
+                        <!-- 预订详情会通过JavaScript动态加载 -->
+                    </div>
+
+                    <!-- 付款資訊卡片 -->
+                    <div class="payment-info-section">
+                        <h3 class="payment-title">您的付款資訊</h3>
+                        <p class="payment-note">您可以選擇以下的方式進行付款</p>
+ 
+                        
+                        <div class="payment-methods">
+                            <!-- Line Pay -->
+                            <div class="payment-method">
+                                <div class="method-title">
+                                    <img src="./assets/img/linepay-logo.png" alt="Line Pay Logo" class="payment-logo">
+                                </div>
+                                <div class="payment-content">
+                                    <div class="payment-info-row">
+                                        <div class="payment-details">
+                                            <img src="./assets/img/linepay-qr.png" alt="Line Pay QR Code" class="payment-qr">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- 銀行匯款 -->
+                            <div class="payment-method">
+                                <div class="method-title">
+                                    <i class="fas fa-university payment-icon"></i>
+                                    <h4>銀行匯款</h4>
+                                </div>
+                                <div class="payment-content">
+                                    <div class="payment-info-row">
+                                        <div class="payment-details">
+                                            <p class="account-number">國泰世華銀行 013</p>
+                                            <p class="account-number">帳戶號碼</p> 
+                                            <p class="account-number">2187 0009 8325</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="payment-note">
+                        <p>付款完成後，請透過Line官方帳號聯繫我們，我們將盡速確認您的預訂</p>
+                    </div>
+
+                </div>
+                
+                <!-- 錯誤訊息 -->
+                <div class="booking-result" id="booking-error" style="display: none;">
+                    <div class="error-icon">
+                        <i class="fas fa-exclamation-circle"></i>
+                    </div>
+                    <h2>預訂提交失敗</h2>
+                    <p>很抱歉，提交預訂時出現問題。</p>
+                    <p>請稍後重試或直接聯絡我們：</p>
+                    <p class="contact-details"><i class="fas fa-phone"></i> 0901255029</p>
+                    <p class="contact-details"><i class="fas fa-envelope"></i> jispace.tw@gmail.com</p>
+                    <button type="button" id="retry-booking" class="retry-btn">重試</button>
+                </div>
+                
+                <!-- 載入中 -->
+                <div class="loading-container" id="submit-loading" style="display: none;">
+                    <div class="loading-spinner"></div>
+                    <p>正在提交預訂...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 導航按鈕容器 -->
+        <div class="navigation-buttons" id="navigation-buttons">
+            <div class="step-buttons">
+                <!-- 步驟1的按鈕 -->
+                <button type="button" id="to-step2" class="next-btn" disabled>查看可用房型</button>
+                
+                <!-- 步驟2的按鈕 -->
+                <button type="button" id="back-to-step1" class="back-btn" style="display: none;">返回</button>
+                <button type="button" id="to-step3" class="next-btn" disabled style="display: none;">填寫資訊</button>
+                
+                <!-- 步驟3的按鈕 -->
+                <button type="button" id="back-to-step2" class="back-btn" style="display: none;">返回</button>
+                <button type="button" id="to-step4" class="next-btn" style="display: none;">確認預訂</button>
+            </div>
+        </div>
+
+        <!-- 底部聯絡資訊 -->
+    </div>
+    <div class="footer">
+        <p><i class="fas fa-phone"></i> 連絡電話：0901255029</p>
+        <p><i class="fas fa-envelope"></i> 信箱：<a href="mailto:jispace.tw@gmail.com">jispace.tw@gmail.com</a></p>
+        <p><i class="fab fa-line"></i> 官方Line：<a href="https://line.me/R/ti/p/@763foyrq" target="_blank">https://line.me/R/ti/p/@763foyrq</a></p>
+        <p class="copyright">© 2025 Ji Space. All rights reserved</p>
+    </div>
+    <!-- 隱藏的iframe表單目標 -->
+    <iframe id="submit-target-iframe" name="submit-target-iframe" style="display:none;"></iframe>
+
+    <!-- 引入腳本庫 -->
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/zh.js"></script>
+    
+    <!-- 引入主要應用腳本 -->
+    <script src="./js/booking.js"></script>
+    
+    <!-- 錯誤處理腳本 -->
+    <script>
+        // 確保在頁面載入後有步驟元素
+        window.addEventListener('load', function() {
+            setTimeout(function() {
+                // 在頁面載入後檢查是否有步驟元素
+                const steps = document.querySelectorAll('.booking-step');
+                if (steps.length === 0) {
+                    console.error('沒有找到步驟元素，嘗試修復');
+                    
+                    // 如果找不到步驟元素，嘗試自動修復
+                    const stepsContainer = document.querySelector('.booking-steps');
+                    if (stepsContainer) {
+                        // 為每個未存在的步驟創建元素
+                        for (let i = 1; i <= 4; i++) {
+                            if (!document.querySelector(`.booking-step.step-${i}`)) {
+                                const stepDiv = document.createElement('div');
+                                stepDiv.className = `booking-step step-${i}`;
+                                stepDiv.style.display = i === 1 ? 'block' : 'none';
+                                stepDiv.innerHTML = `<h2>第${i}步</h2><p>加載中...</p>`;
+                                stepsContainer.appendChild(stepDiv);
+                                console.log(`已創建第${i}步元素`);
+                            }
+                        }
+                    }
+                }
+            }, 1000);
+        });
+    </script>
+</body>
+</html> 
